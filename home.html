@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Real-time Notification Test</title>
+</head>
+<body>
+  <h2>🔔 Real-time Notification Test</h2>
+
+  <p id="status">Connecting to server...</p>
+  <ul id="notifications"></ul>
+
+  <!-- Include Socket.IO client -->
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <script>
+    // Update this to match your backend Socket.IO server port
+    const socket = io('http://localhost:5000');
+
+    const userId = '2'; // ✅ Replace this with a real userId from your database
+
+    const status = document.getElementById('status');
+    const notifications = document.getElementById('notifications');
+
+    socket.on('connect', () => {
+      status.innerText = '✅ Connected to WebSocket';
+
+      // Register user to receive notifications
+      socket.emit('register', userId);
+    });
+
+    socket.on('notification', (data) => {
+      const item = document.createElement('li');
+      item.textContent = `🔔 ${data.message}`;
+      notifications.appendChild(item);
+    });
+
+    socket.on('disconnect', () => {
+      status.innerText = '❌ Disconnected from server';
+    });
+  </script>
+</body>
+</html>
